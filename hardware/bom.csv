@@ -1,0 +1,18 @@
+subsystem,part,mpn,supplier,qty,unit_cost,link,notes
+flight-control,Flight controller,Pixhawk 2.4.8,TODO,1,TODO,TODO,"STM32F4 — 256 KB SRAM total. Script heap is the binding constraint on this project; see vehicle/params/verified.md."
+sensing,Thru-hull depth transducer / sounder,ATU120A,CruzPro,1,TODO,TODO,"Emits NMEA 0183 $SDDBT / $SDDPT at 4800 baud, 5 V logic. Datasheet not yet obtained — TODO in docs/references.md."
+telemetry,Telemetry radio,3DR SiK V1.3,TODO,1,TODO,TODO,"CURRENTLY FAULTY — do not reconnect to the Pixhawk. See repairs/sik-radio-overvoltage.md."
+telemetry,3.3 V LDO regulator (SiK repair part),MIC5219-3.3YM5-TR,DigiKey,1,1.19,https://www.digikey.com/en/products/detail/microchip-technology/MIC5219-3-3YM5-TR,"Repair part for the SiK radio. Suspected failed device. Unit cost approximate."
+sensing,GPS / compass module,TODO,TODO,1,TODO,TODO,TODO
+propulsion,Underwater thruster,TODO,TODO,2,TODO,TODO,"Twin, differential thrust. Skid-steer; must pivot in place."
+propulsion,ESC,TODO,TODO,2,TODO,TODO,TODO
+power,Battery pack,TODO,TODO,1,TODO,TODO,"Chemistry, cell count and capacity TODO. Feeds the mission-duration bound in F11."
+power,Power distribution / BEC,TODO,TODO,1,TODO,TODO,TODO
+power,Battery monitor / current sensor,TODO,TODO,1,TODO,TODO,"Not yet fitted or configured. BATT_MONITOR is unset — F11."
+power,Main fuse,TODO,TODO,1,TODO,TODO,"Rating TODO — see power-tree.md."
+power,E-stop / arming disconnect,TODO,TODO,1,TODO,TODO,"Required by ops/prelaunch-checklist.md for the first water run."
+sensing,Divider resistors (5 V to 3.3 V on TELEM2 RX),TODO,TODO,2,TODO,TODO,"510 ohm used. Exact pair, tolerance and power rating TODO — see telem2-depth-interface.md."
+structure,Pontoon hulls,TODO,TODO,2,TODO,TODO,"Foam-cored fibreglass. Thru-hull penetration must be sealed — see transducer-install.md."
+structure,Thru-hull fitting / backing plate,TODO,TODO,1,TODO,TODO,TODO
+structure,Sealant,TODO,TODO,1,TODO,TODO,"Type TODO. Must be compatible with foam-cored fibreglass."
+control,RC transmitter / receiver,TODO,TODO,1,TODO,TODO,"SWC is the mode switch. Rover reads it only on a change of position."
