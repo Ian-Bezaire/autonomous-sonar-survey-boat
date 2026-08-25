@@ -1,0 +1,25 @@
+# Raw flight logs stay out of git deliberately. A single survey log dwarfs the entire
+# source tree and git cannot diff it. Provenance is tracked in data/sessions/*/MANIFEST.md
+# (filename, SHA-256, where the bytes actually live); the bytes themselves live elsewhere.
+*.BIN
+*.bin
+*.tlog
+*.tlog.raw
+
+# Derived analysis products — regenerate from logs
+data/derived/
+*.png
+*.tif
+*.geotiff
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
