@@ -1,0 +1,14 @@
+# Post-processing for survey logs. Nothing here runs on the vehicle.
+#
+# Deliberately unpinned for now: nothing has been run against a real log yet, so a pin
+# would record a version that was never validated. That is worse than no pin, because it
+# looks like a decision.
+#
+# TODO: pin exact versions (pip freeze) once the first real survey log processes cleanly
+# end to end, and record which log it was.
+
+pandas
+numpy
+scipy
+matplotlib
+pymavlink
