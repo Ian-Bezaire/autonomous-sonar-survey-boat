@@ -1,0 +1,53 @@
+# survey.param -- minimal delta set for the autonomous survey catamaran.
+#
+# ONLY parameters that differ from a stock ArduPilot Rover build belong here, so this file
+# stays diffable and reviewable. The reasoning behind every row lives in verified.md; a
+# value here without a row there is a value nobody can defend.
+#
+# Load with: Mission Planner / MAVProxy parameter load, then REBOOT (SCR_ENABLE needs it).
+#
+# Full dated dumps of the entire parameter set go in full/YYYY-MM-DD-context.param, taken
+# BEFORE each session. This file is the delta; those are the record.
+#
+# INCOMPLETE. Only parameters whose values are actually established are listed. Everything
+# still marked TODO in verified.md is deliberately absent rather than guessed -- see the
+# TODO block at the bottom. Do not fill these in from memory; measure or read them off the
+# board and update verified.md in the same commit.
+
+# ---- Scripting ----
+SCR_ENABLE,1
+# Module selector: 0 = idle, 1 = mk1 dead-reckoning, 2 = mk2 GPS-anchored.
+# Deployed as 0 so the boat never comes up already selecting a survey module.
+SCR_USER1,0
+
+# ---- Depth sensing ----
+# Downward-facing rangefinder. Both modules test for orientation 25 before
+# trusting a reading.
+RNGFND1_ORIENT,25
+
+# ---------------------------------------------------------------------------
+# TODO: add once measured or read off the board, each with a verified.md row:
+#
+#   RNGFND1_TYPE       NMEA serial backend for the ATU120A (NOT the MAVLink
+#                      type 10 used by the SITL feeders)
+#   RNGFND1_MIN_CM     blocks F9 -- measure in the bucket test
+#   RNGFND1_MAX_CM     must exceed the deepest water surveyed
+#   SERIAL2_PROTOCOL   put TELEM2 on the rangefinder/NMEA protocol
+#   SERIAL2_BAUD       must correspond to 4800 baud
+#   WP_RADIUS          mk2 scales both arrival tests off it (F12)
+#   WP_PIVOT_ANGLE     clean skid-steer pivots
+#   WP_PIVOT_RATE      blocks F4 -- unverified on the board
+#   FENCE_ENABLE       \
+#   FENCE_RADIUS        |  must exceed MAX_LEG_DISTANCE_M = 60.0 m (F7)
+#   FENCE_ACTION        |
+#   FENCE_TYPE         /
+#   BATT_MONITOR       \
+#   BATT_FS_LOW_ACT     |  F11 -- blocks water test
+#   BATT_LOW_VOLT       |
+#   BATT_CRT_VOLT       |
+#   BATT_FS_CRT_ACT    /
+#
+# Confirm the RNGFND1_MIN_CM / RNGFND1_MIN naming against the firmware actually
+# on the board before adding those rows -- the names differ across versions and
+# a wrong one reads back as nil in the scripts.
+# ---------------------------------------------------------------------------
