@@ -1,0 +1,48 @@
+# Copy this directory to data/sessions/YYYY-MM-DD-water-body/ and fill it in.
+# Everything except `outcome` and `incidents` is filled in BEFORE launching.
+
+date: YYYY-MM-DD
+water_body:
+tag:                 # git tag of the exact code+params on the boat
+module:              # mk1 | mk2
+operator:
+weather:
+water_level_datum:   # reading against the fixed shore mark
+draft_m:
+sound_speed_scale:
+line_spacing_m:
+crossline_run: false # one manual perpendicular pass -- your only real vertical uncertainty estimate
+outcome:
+incidents: []
+
+# ---------------------------------------------------------------------------
+# tag                 Made BEFORE the session, from the tree actually deployed.
+#                     Format <module>-<venue>-<date>, e.g. mk2-water-2026-09-06.
+#                     Without it this session's data cannot be tied to a code or
+#                     parameter state later, and that is not recoverable after
+#                     the fact. See data/README.md.
+#
+# water_level_datum   The lake is not the same height every visit. Without a
+#                     reading against a fixed shore mark, two surveys of the
+#                     same water body cannot be compared and neither can be tied
+#                     to a permanent datum.
+#
+# draft_m             What was actually applied that day, not the current best in
+# sound_speed_scale   data/calibration/. Both change -- draft with load, sound
+#                     speed with temperature.
+#
+# line_spacing_m      OFFSET_DISTANCE_M as deployed. It is a script constant, so
+#                     it changes by commit; recording it here means the survey
+#                     density is readable without checking out the tag.
+#
+# crossline_run       Set true only if the perpendicular pass was actually run.
+#                     It is the only independent check on vertical accuracy this
+#                     survey will ever have.
+#
+# incidents           Issue links or incident-log.md dates. An empty list is a
+#                     claim that nothing unexpected happened -- make it honestly.
+#
+# TODO: record the ArduPilot firmware version here too, once the field name is
+# settled. It is currently only in vehicle/params/verified.md, which is a
+# repo-wide file rather than a per-session one.
+# ---------------------------------------------------------------------------
