@@ -81,6 +81,24 @@ def main():
     depth = df["depth_m"].to_numpy(dtype=float)
     x, y, lat0, lon0 = to_local_metres(lat, lon)
 
+    # QC drops rows (spikes, mid-pivot) without closing the gap, so consecutive
+    # rows here can be seconds apart -- e.g. an entire turn removed. A plain
+    # ax.plot() would draw a straight chord across that gap, which on a survey
+    # with many turns (a boustrophedon grid) looks like the track converges or
+    # crosses itself when it never actually went there. Break the line at any
+    # gap wider than a few normal sample periods so the plotted track shows
+    # only where the vehicle was actually observed to be.
+    track_x, track_y = x.copy(), y.copy()
+    if "TimeUS" in df.columns:
+        t = df["TimeUS"].to_numpy(dtype=float) / 1e6  # seconds
+        dt = np.diff(t, prepend=t[0])
+        typical_dt = np.median(dt[dt > 0]) if np.any(dt > 0) else 0.2
+        gap = dt > max(typical_dt * 5, 1.0)
+        track_x = track_x.copy()
+        track_y = track_y.copy()
+        track_x[gap] = np.nan
+        track_y[gap] = np.nan
+
     res = args.grid_res_m
     gx = np.arange(x.min(), x.max() + res, res)
     gy = np.arange(y.min(), y.max() + res, res)
@@ -101,7 +119,7 @@ def main():
     ax.contour(GX, GY, GZ, levels=levels, colors="k", linewidths=0.3, alpha=0.5)
 
     # The coverage check. Look at this first.
-    ax.plot(x, y, color="0.25", linewidth=0.6, alpha=0.8, zorder=3, label="vehicle track")
+    ax.plot(track_x, track_y, color="0.25", linewidth=0.6, alpha=0.8, zorder=3, label="vehicle track")
     ax.scatter(x, y, s=1.0, color="k", alpha=0.35, zorder=4)
 
     cb = fig.colorbar(cf, ax=ax)
