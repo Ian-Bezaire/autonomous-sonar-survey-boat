@@ -465,28 +465,22 @@ local function update(now_ms)
     return
   end
 
-  -- depth_lost_warned is a latch: it only clears when a FRESH valid reading
-  -- arrives (above), never just because a new leg started. Without that,
-  -- "signal lost" (true for every tick until recovery) would re-trigger the
-  -- leg-ending logic below on every single 100ms tick -- burning through
-  -- many strips in a couple of seconds on any sensor blip. This latch makes
-  -- it a one-shot event per loss episode, same intent as the old design's
-  -- state-gated version of this check.
+  -- depth_lost_warned only rate-limits the GCS message (one print per loss
+  -- episode, cleared on the next fresh valid reading) -- it does NOT decide
+  -- whether signal loss ends a leg. That decision is made fresh per leg,
+  -- cooldown-gated, further down (see depth_lost_ends_leg): a global
+  -- one-shot latch here was found in SITL to silently disarm shore detection
+  -- for the rest of a continuous dry excursion -- the first APPROACH leg
+  -- into dry land would consume the one-shot (APPROACH ignores it by
+  -- design), and every RUN leg afterwards, still genuinely off the edge of
+  -- the lake, would then run its full blind length because the latch never
+  -- re-armed. A real, sustained loss must be able to end every leg it
+  -- affects, not just the first one.
   local depth_signal_lost = have_valid_depth
     and ((now_ms - last_valid_depth_ms) > (DEPTH_STALE_TIMEOUT_S * 1000))
-  local depth_lost_ends_leg = false
   if depth_signal_lost and not depth_lost_warned then
     depth_lost_warned = true
-    if phase == PHASE_SURVEY and sub_leg == SUBLEG_RUN then
-      -- Real shore can present as signal loss if the remaining open-water
-      -- chord is shorter than the sensor's own settle time -- treat it as a
-      -- confirmed-shallow equivalent, same as the debounce path below.
-      depth_lost_ends_leg = true
-    else
-      -- Approach transit / return-to-hub: sonar isn't in the critical path
-      -- for either, and stopping mid-lake is worse than finishing the trip.
-      gcs:send_text(4, "SURVEY: depth signal lost - not needed for this leg, continuing")
-    end
+    gcs:send_text(4, "SURVEY: depth signal lost")
   end
 
   -- Outer absolute safety net.
@@ -563,6 +557,19 @@ local function update(now_ms)
   local shallow_confirmed = (shallow_since_ms ~= nil)
     and ((now_ms - shallow_since_ms) >= DEPTH_CONFIRM_MS)
     and (shallow_samples >= DEPTH_MIN_SAMPLES)
+
+  -- Sustained signal loss, past the same cooldown as shallow detection, is
+  -- treated as a confirmed-shallow equivalent on BOTH sub-legs, not just
+  -- RUN: real shore can present as signal loss if the remaining open-water
+  -- chord is shorter than the sensor's own settle time, or the boat has
+  -- simply driven off the edge of the lake into dry ground the rangefinder
+  -- can't range at all. Unlike mk2's short lateral OFFSET hop (a few metres,
+  -- where skipping the check was cheap and reasonable), an APPROACH leg here
+  -- can be a long point-to-point transit -- letting it run blind through
+  -- confirmed dry land the whole way wastes real distance and time for no
+  -- reason. Checked fresh every tick (not latched), so it keeps working for
+  -- every leg of a continuous dry excursion, not just the first.
+  local depth_lost_ends_leg = (not in_cooldown) and depth_signal_lost and phase == PHASE_SURVEY
 
   local arrived = (leg_length_m < 0.01) or (prog >= arrive_m(leg_length_m))
   local out_of_range = hub_dist > (MAX_RANGE_M + RANGE_MARGIN_M)
