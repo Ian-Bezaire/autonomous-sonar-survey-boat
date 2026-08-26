@@ -44,7 +44,7 @@ RNGFND_INSTANCE = 0
 # position/attitude match must be tight. 200 ms at 1 m/s is 0.2 m.
 MERGE_TOLERANCE_MS = 200
 
-WANTED = ("RFND", "POS", "ATT")
+WANTED = ["RFND", "POS", "ATT"]
 
 
 def read_log(path):
