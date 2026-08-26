@@ -15,6 +15,7 @@
       0 -> idle (default; safe out of the box)
       1 -> depth_survey_mk1 (dead-reckoning)
       2 -> depth_survey_mk2 (GPS-anchored, two-phase)
+      3 -> depth_survey_mk3 (GPS-anchored, guaranteed both-sides, capped)
 
   MODULE CONTRACT -- every entry in ALGORITHMS is a table with:
     NAME    string
@@ -57,6 +58,7 @@
 local ALGORITHMS = {
   [1] = require("depth_survey_mk1"),
   [2] = require("depth_survey_mk2"),
+  [3] = require("depth_survey_mk3"),
 }
 
 local UPDATE_PERIOD_MS = 100
@@ -119,6 +121,6 @@ local function update_dispatch()
   return update_dispatch, UPDATE_PERIOD_MS
 end
 
-gcs:send_text(6, "SURVEY: dispatcher loaded -- SCR_USER1: 0=idle, 1=mk1 dead-reckoning, 2=mk2 GPS-anchored")
+gcs:send_text(6, "SURVEY: dispatcher loaded -- SCR_USER1: 0=idle, 1=mk1 dead-reckoning, 2=mk2 GPS-anchored, 3=mk3 both-sides")
 
 return update_dispatch, 1000
