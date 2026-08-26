@@ -44,6 +44,7 @@ Copy `../vehicle/scripts/` into the SITL instance's `scripts/` directory, keepin
 |---|---|---|
 | [`depth_feeder.py`](depth_feeder.py) | **Manual** — you type depths at a prompt | Exercising one trigger at a time. First bring-up, and reproducing a specific transition. |
 | [`lake_feeder.py`](lake_feeder.py) | **Automatic** — tracks the vehicle's simulated GPS position and computes depth from a synthetic bowl-shaped lake | Unattended full-sweep runs. This is the one that tests the survey. |
+| [`lake_feeder_complex.py`](lake_feeder_complex.py) | **Automatic**, same interface as `lake_feeder.py` — irregular shoreline, two off-centre basins, a shoal ridge, and low-amplitude texture instead of a radial bowl | Checking the sweep against a bottom that isn't radially symmetric — an off-hub basin, a mid-lake shoal turn, a shoreline with coves. |
 
 `depth_feeder.py` connects to SITL's spare port and starts at 10 m, accepting a number,
 `deep`, `shallow` or `auto`. It cannot run unattended, which is exactly why `lake_feeder.py`

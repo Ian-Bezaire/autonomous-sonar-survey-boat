@@ -20,6 +20,15 @@ python3 qc.py --in soundings_raw.csv --out soundings_qc.csv
 python3 grid_and_plot.py --in soundings_qc.csv --out lake-contours.png
 ```
 
+[`make_depth_map.py`](make_depth_map.py) chains all three in one command for convenience --
+it does not replace them, each stage stays runnable on its own and every stage's diagnostic
+output stays on screen:
+
+```bash
+python3 make_depth_map.py --log 2026-09-06-lake.BIN --out lake-contours.png \
+    --draft-m 0.21 --sound-speed-scale 0.9767
+```
+
 ## Where the numbers come from
 
 `--draft-m` and `--sound-speed-scale` are **not** defaulted to anything plausible, because a
