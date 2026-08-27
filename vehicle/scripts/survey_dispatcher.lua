@@ -16,6 +16,7 @@
       1 -> depth_survey_mk1 (dead-reckoning)
       2 -> depth_survey_mk2 (GPS-anchored, two-phase)
       3 -> depth_survey_mk3 (GPS-anchored, guaranteed both-sides, capped)
+      4 -> depth_survey_mk4 (explore-then-cover: seek, trace, plan, cover, return)
 
   MODULE CONTRACT -- every entry in ALGORITHMS is a table with:
     NAME    string
@@ -59,6 +60,7 @@ local ALGORITHMS = {
   [1] = require("depth_survey_mk1"),
   [2] = require("depth_survey_mk2"),
   [3] = require("depth_survey_mk3"),
+  [4] = require("depth_survey_mk4"),
 }
 
 local UPDATE_PERIOD_MS = 100
@@ -121,6 +123,6 @@ local function update_dispatch()
   return update_dispatch, UPDATE_PERIOD_MS
 end
 
-gcs:send_text(6, "SURVEY: dispatcher loaded -- SCR_USER1: 0=idle, 1=mk1 dead-reckoning, 2=mk2 GPS-anchored, 3=mk3 both-sides")
+gcs:send_text(6, "SURVEY: dispatcher loaded -- SCR_USER1: 0=idle, 1=mk1 dead-reckoning, 2=mk2 GPS-anchored, 3=mk3 both-sides, 4=mk4 explore-cover")
 
 return update_dispatch, 1000
